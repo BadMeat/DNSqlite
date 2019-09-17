@@ -2,6 +2,14 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.dolan.arif.dnsqlite">
 
+    <permission
+        android:name="com.dolan.arif.dnsqlite.READ_DATABASE"
+        android:protectionLevel="normal" />
+    <permission
+        android:name="com.dolan.arif.dnsqlite.WRITE_DATABASE"
+        android:protectionLevel="normal" />
+
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -9,6 +17,14 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <provider
+            android:name=".provider.NoteProvider"
+            android:authorities="com.dolan.arif.dnsqlite"
+            android:exported="true"
+            android:readPermission="com.dolan.arif.dnsqlite.READ_DATABASE"
+            android:writePermission="com.dolan.arif.dnsqlite.WRITE_DATABASE" />
+
+        <activity android:name=".NoteAddUpdateActivity"></activity>
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
