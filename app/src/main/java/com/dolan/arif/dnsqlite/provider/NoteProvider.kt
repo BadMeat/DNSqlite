@@ -22,7 +22,7 @@ class NoteProvider : ContentProvider() {
         var uriMathcer = UriMatcher(UriMatcher.NO_MATCH)
     }
 
-    fun ab() {
+    init {
         // content://com.dicoding.picodiploma.mynotesapp/note
         uriMathcer.addURI(AUTHORITY, TABLE_NOTE, NOTE)
 
@@ -30,14 +30,14 @@ class NoteProvider : ContentProvider() {
         uriMathcer.addURI(AUTHORITY, "$TABLE_NOTE/#", NOTE_ID)
     }
 
-    static
-    {
-        // content://com.dicoding.picodiploma.mynotesapp/note
-        uriMathcer.addURI(AUTHORITY, TABLE_NOTE, NOTE)
-
-        // content://com.dicoding.picodiploma.mynotesapp/note/id
-        uriMathcer.addURI(AUTHORITY, "$TABLE_NOTE/#", NOTE_ID)
-    }
+//    static
+//    {
+//        // content://com.dicoding.picodiploma.mynotesapp/note
+//        uriMathcer.addURI(AUTHORITY, TABLE_NOTE, NOTE)
+//
+//        // content://com.dicoding.picodiploma.mynotesapp/note/id
+//        uriMathcer.addURI(AUTHORITY, "$TABLE_NOTE/#", NOTE_ID)
+//    }
 
     override fun insert(uri: Uri, values: ContentValues?): Uri? {
         noteHelper?.open()

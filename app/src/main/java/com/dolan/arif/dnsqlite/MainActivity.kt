@@ -16,6 +16,7 @@ import com.dolan.arif.dnsqlite.NoteAddUpdateActivity.Companion.REQUEST_ADD
 import com.dolan.arif.dnsqlite.NoteAddUpdateActivity.Companion.REQUEST_UPDATE
 import com.dolan.arif.dnsqlite.NoteAddUpdateActivity.Companion.RESULT_ADD
 import com.dolan.arif.dnsqlite.NoteAddUpdateActivity.Companion.RESULT_DELETE
+import com.dolan.arif.dnsqlite.helper.MappingHelper
 import kotlinx.android.synthetic.main.activity_main.*
 import java.lang.ref.WeakReference
 
@@ -46,10 +47,15 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, LoadNoteCallback
         }
     }
 
-    override fun postExecute(note: List<Note>?) {
+    override fun postExecute(result: Cursor?) {
         progressbar.visibility = View.INVISIBLE
-        if (note != null) {
-            noteAdapter.setListNote(note.toMutableList())
+        val listNote = MappingHelper.mapCursorToArrayList(result)
+        if (listNote != null) {
+            if (listNote.isNotEmpty()) {
+                noteAdapter.setListNote(listNote.toMutableList())
+            } else {
+                noteAdapter.setListNote(mutableListOf())
+            }
         }
     }
 
@@ -61,7 +67,6 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, LoadNoteCallback
         rv_notes.setHasFixedSize(true)
 
 //        noteHelper = NoteHelper.getInstance(this)
-//
 //        noteHelper.open()
 
         handlerThread = HandlerThread("DataObserver")
@@ -88,7 +93,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, LoadNoteCallback
     private class LoadNoteAsync(
         noteHelper: Context,
         callBack: LoadNoteCallback
-    ) : AsyncTask<Void, Void, Cursor> {
+    ) : AsyncTask<Void, Void, Cursor?>() {
 
         private val weakContext: WeakReference<Context> = WeakReference(noteHelper)
         private val weakCallBack: WeakReference<LoadNoteCallback> = WeakReference(callBack)
@@ -98,11 +103,12 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, LoadNoteCallback
             weakCallBack.get()?.preExecute()
         }
 
-        override fun doInBackground(vararg params: Void?): Cursor {
-            return weakContext.get()!!.getAllNotes()
+        override fun doInBackground(vararg params: Void?): Cursor? {
+            val ctx = weakContext.get()
+            return ctx?.contentResolver?.query(CONTENT_URI, null, null, null, null)
         }
 
-        override fun onPostExecute(result: Cursor) {
+        override fun onPostExecute(result: Cursor?) {
             super.onPostExecute(result)
             weakCallBack.get()?.postExecute(result)
         }
@@ -142,11 +148,6 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, LoadNoteCallback
                 }
             }
         }
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        noteHelper.close()
     }
 
     class DataObserver(handler: Handler, ctx: Context) : ContentObserver(handler) {

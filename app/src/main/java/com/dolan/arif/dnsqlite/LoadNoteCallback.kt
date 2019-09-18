@@ -1,6 +1,8 @@
 package com.dolan.arif.dnsqlite
 
+import android.database.Cursor
+
 interface LoadNoteCallback {
     fun preExecute()
-    fun postExecute(note: List<Note>?)
+    fun postExecute(result: Cursor?)
 }
