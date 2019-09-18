@@ -20,7 +20,7 @@ class DatabaseContract {
                 const val TITLE = "title"
                 const val DESC = "desc"
 
-                val CONTENT_URI = Uri.Builder().scheme(SCHEME)
+                val CONTENT_URI: Uri = Uri.Builder().scheme(SCHEME)
                     .authority(AUTHORITY)
                     .appendPath(TABLE_NOTE)
                     .build()

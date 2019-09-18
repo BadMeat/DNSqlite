@@ -1,12 +1,15 @@
 package com.dolan.arif.dnsqlite
 
 import android.content.Intent
+import android.net.Uri
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
+import com.dolan.arif.dnsqlite.DatabaseContract.Companion.NoteColumn.Companion.CONTENT_URI
 
 
 class NoteAdapter(private val activity: MainActivity) :
@@ -54,25 +57,8 @@ class NoteAdapter(private val activity: MainActivity) :
 
     override
     fun onBindViewHolder(holder: NoteHolder, position: Int) {
-        holder.bindItem(noteList[position])
-        val ab: CustomOnItemClickListener.OnItemClickCallBack
-        holder.itemNote.setOnClickListener(
-            CustomOnItemClickListener(
-                position,
-                object : CustomOnItemClickListener.OnItemClickCallBack {
-                    override fun onItemClicked(view: View?, position: Int) {
-                        val intent = Intent(activity, NoteAddUpdateActivity::class.java)
-                        intent.putExtra(NoteAddUpdateActivity.EXTRA_POSITION, position)
-                        intent.putExtra(NoteAddUpdateActivity.EXTRA_NOTE, noteList[position])
-                        activity.startActivityForResult(
-                            intent,
-                            NoteAddUpdateActivity.REQUEST_UPDATE
-                        )
-                    }
+        holder.bindItem(noteList[position], position, activity)
 
-                }
-            )
-        )
     }
 
     class NoteHolder(view: View) : RecyclerView.ViewHolder(view) {
@@ -81,9 +67,30 @@ class NoteAdapter(private val activity: MainActivity) :
         private val txtDesc: TextView = view.findViewById(R.id.txt_desc)
         val itemNote: CardView = view.findViewById(R.id.cv_item_note)
 
-        fun bindItem(note: Note) {
+        fun bindItem(note: Note, position: Int, activity: MainActivity) {
             txtTitle.text = note.title
             txtDesc.text = note.desc
+            itemView.setOnClickListener(
+                CustomOnItemClickListener(
+                    position,
+                    object : CustomOnItemClickListener.OnItemClickCallBack {
+                        override fun onItemClicked(view: View?, position: Int) {
+                            val uri = Uri.parse("$CONTENT_URI/${note.id}")
+                            val intent = Intent(activity, NoteAddUpdateActivity::class.java)
+                            Log.d("URINYA", "$uri")
+                            intent.data = uri
+                            intent.putExtra(NoteAddUpdateActivity.EXTRA_POSITION, position)
+                            intent.putExtra(NoteAddUpdateActivity.EXTRA_NOTE, note)
+                            activity.startActivityForResult(
+                                intent,
+                                NoteAddUpdateActivity.REQUEST_UPDATE
+                            )
+
+                        }
+
+                    }
+                )
+            )
         }
     }
 }

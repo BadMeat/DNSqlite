@@ -20,24 +20,15 @@ class NoteProvider : ContentProvider() {
         const val NOTE = 1
         const val NOTE_ID = 2
         var uriMathcer = UriMatcher(UriMatcher.NO_MATCH)
+
+        init {
+            // content://com.dicoding.picodiploma.mynotesapp/note
+            uriMathcer.addURI(AUTHORITY, TABLE_NOTE, NOTE)
+
+            // content://com.dicoding.picodiploma.mynotesapp/note/id
+            uriMathcer.addURI(AUTHORITY, "$TABLE_NOTE/#", NOTE_ID)
+        }
     }
-
-    init {
-        // content://com.dicoding.picodiploma.mynotesapp/note
-        uriMathcer.addURI(AUTHORITY, TABLE_NOTE, NOTE)
-
-        // content://com.dicoding.picodiploma.mynotesapp/note/id
-        uriMathcer.addURI(AUTHORITY, "$TABLE_NOTE/#", NOTE_ID)
-    }
-
-//    static
-//    {
-//        // content://com.dicoding.picodiploma.mynotesapp/note
-//        uriMathcer.addURI(AUTHORITY, TABLE_NOTE, NOTE)
-//
-//        // content://com.dicoding.picodiploma.mynotesapp/note/id
-//        uriMathcer.addURI(AUTHORITY, "$TABLE_NOTE/#", NOTE_ID)
-//    }
 
     override fun insert(uri: Uri, values: ContentValues?): Uri? {
         noteHelper?.open()
